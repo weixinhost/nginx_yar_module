@@ -1,4 +1,4 @@
-#include "../yar/yar.h"
+#include <ngx_yar/yar.h>
 
 void yar_method_test(yar_request *request, yar_response *response, void *cookie){
 
