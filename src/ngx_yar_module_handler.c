@@ -236,6 +236,8 @@ void ngx_http_yar_handler(ngx_http_request_t *r){
 
         };
 
+        return ;
+
     }
 
 
