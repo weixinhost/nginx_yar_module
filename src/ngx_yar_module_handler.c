@@ -218,6 +218,17 @@ void ngx_http_yar_handler(ngx_http_request_t *r){
 
     }
 
+
+    yar_header response_header;
+
+    yar_protocol_render(&response_header, request->id, NULL, NULL, response->payload.size - sizeof(yar_header), 0);
+
+    memcpy(response->payload.data, (char *)&response_header, sizeof(yar_header));
+
+    memcpy(response->payload.data + sizeof(yar_header), YAR_PACKAGER, sizeof(YAR_PACKAGER));
+
+
+
     ngx_str_t reply;
 
     reply.data = (u_char *)response->payload.data;
