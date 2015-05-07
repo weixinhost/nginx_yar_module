@@ -161,7 +161,12 @@ yar_response*   ngx_http_yar_get_yar_response(ngx_http_request_t *r, yar_request
 
     yar_method current_method = (yar_method)dlsym(my_conf->yar_method_handler,real_method);
 
-    if(!current_method) return NULL;
+    if(!current_method) {
+
+        yar_response_free(response);
+
+        return NULL;
+    }
 
     current_method(request,response,cookie);
 
