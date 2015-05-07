@@ -96,6 +96,8 @@ yar_request*    ngx_http_yar_get_yar_request(ngx_http_request_t *r,ngx_str_t *bo
 
     yar_request *request =  (yar_request *)ngx_pnalloc(r->pool,sizeof(yar_request));
 
+    memset(request,0,sizeof(yar_request));
+
     request->id = 0;
 
     request->mlen = 0;
@@ -142,6 +144,8 @@ yar_response*   ngx_http_yar_get_yar_response(ngx_http_request_t *r, yar_request
     }
 
     yar_response *response = (yar_response *)ngx_pnalloc(r->pool,sizeof(yar_response));
+
+    memset(response,0,sizeof(yar_response));
 
     response->id = 0;
 
