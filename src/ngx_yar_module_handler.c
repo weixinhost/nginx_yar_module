@@ -197,7 +197,6 @@ void ngx_http_yar_handler(ngx_http_request_t *r){
 
     response = ngx_http_yar_get_yar_response(r,request);
 
-
     if(!response){
 
         ngx_str_set(&error,"get response error.");

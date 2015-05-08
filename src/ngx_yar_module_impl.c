@@ -123,7 +123,6 @@ yar_request*    ngx_http_yar_get_yar_request(ngx_http_request_t *r,ngx_str_t *bo
 
     if(request->mlen < 1) {
 
-
         ngx_log_error(NGX_LOG_WARN, r->connection->log, 0,
                       "yar call method name cannt be empty.");
 
