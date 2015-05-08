@@ -1,7 +1,8 @@
 #include "ngx_yar_module_handler.h"
 #include "ngx_yar_module_impl.h"
 #include <dlfcn.h>
-static void *ngx_http_yar_create_loc_conf(ngx_conf_t *cf);
+
+static void* ngx_http_yar_create_loc_conf(ngx_conf_t *cf);
 
 static char* ngx_http_yar_conf_yar_method_path(ngx_conf_t *cf, ngx_command_t *cmd,void *conf);
 static char* ngx_http_yar_conf_on(ngx_conf_t *cf, ngx_command_t *cmd,void *conf);
@@ -56,7 +57,7 @@ static ngx_command_t ngx_http_yar_commands[] = {
 
 static ngx_http_module_t ngx_http_yar_module_ctx = {
         NULL,                          /* preconfiguration */
-        NULL,           /* postconfiguration */
+        NULL,                          /* postconfiguration */
         NULL,                          /* create main configuration */
         NULL,                          /* init main configuration */
 
@@ -116,11 +117,6 @@ static char* ngx_http_yar_conf_yar_method_path(ngx_conf_t *cf, ngx_command_t *cm
         local_conf->yar_method_handler = (void *) dlopen ((const char *) local_conf->yar_method_path.data,
                                                    RTLD_NOW | RTLD_LOCAL);
 
-        if(!local_conf->yar_method_handler){
-
-          //  ngx_log_error(NGX_LOG_EMERG, NULL, 0, "open yar_method_path:%s error. %s",(char *)local_conf->yar_method_path.data,dlerror());
-
-        }
     }
 
     return rv;
@@ -228,7 +224,6 @@ void ngx_http_yar_handler(ngx_http_request_t *r){
     memcpy(response->payload.data + sizeof(yar_header), YAR_PACKAGER, sizeof(YAR_PACKAGER));
 
 
-
     ngx_str_t reply;
 
     reply.data = (u_char *)response->payload.data;
@@ -237,31 +232,35 @@ void ngx_http_yar_handler(ngx_http_request_t *r){
 
     ngx_http_yar_send_response(r,&reply);
 
+    goto clean_resource;
 
     while(0){
 
         send_error:
         {
 
-            ngx_http_yar_send_response(r,&error);
+            ngx_http_yar_send_response (r, &error);
 
+            goto clean_resource;
         };
 
         return ;
 
     }
 
+    clean_resource:
+    {
+        if (request) {
 
-    if(request){
+            yar_request_free (request);
 
-        yar_request_free(request);
+        }
 
-    }
+        if (response) {
 
-    if(response){
+            yar_response_free (response);
 
-        yar_response_free(response);
-
+        }
     }
 
 }

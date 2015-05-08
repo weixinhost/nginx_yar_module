@@ -1,4 +1,5 @@
 #include "ngx_yar_module_impl.h"
+#include "ngx_yar_module_handler.h"
 #include <dlfcn.h>
 
 extern  ngx_module_t ngx_http_yar_module;
@@ -13,6 +14,10 @@ ngx_str_t*      ngx_http_yar_read_client_post_body(ngx_http_request_t *r){
 
     if(r->request_body == NULL || r->request_body->bufs == NULL){
 
+        ngx_log_error(NGX_LOG_WARN, r->connection->log, 0,
+                      "read client request body error.");
+
+        return NULL;
     }
 
     cl = r->request_body->bufs;
@@ -82,9 +87,10 @@ yar_request*    ngx_http_yar_get_yar_request(ngx_http_request_t *r,ngx_str_t *bo
 
     if(!ret) return NULL;
 
-
     if(ngx_strncmp (body->data + sizeof(yar_header),YAR_PACKAGER,sizeof(YAR_PACKAGER) - 1) != 0 ){
 
+        ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
+                      "not support packager name(%s). only support for MSGPACK",body->data + sizeof(yar_header));
         return NULL;
     }
 
@@ -108,11 +114,18 @@ yar_request*    ngx_http_yar_get_yar_request(ngx_http_request_t *r,ngx_str_t *bo
 
     if(!ret){
 
+        ngx_log_error(NGX_LOG_WARN, r->connection->log, 0,
+                      "unpack yar request error.");
+
         return NULL;
 
     }
 
     if(request->mlen < 1) {
+
+
+        ngx_log_error(NGX_LOG_WARN, r->connection->log, 0,
+                      "yar call method name cannt be empty.");
 
         return NULL;
     }
@@ -139,6 +152,9 @@ yar_response*   ngx_http_yar_get_yar_response(ngx_http_request_t *r, yar_request
 
     if(!my_conf->yar_method_handler){
 
+        ngx_log_error(NGX_LOG_WARN, r->connection->log, 0,
+                      "cannt open yar_method_path(%s)",(char *)my_conf->yar_method_path.data);
+
         return NULL;
 
     }
@@ -163,6 +179,9 @@ yar_response*   ngx_http_yar_get_yar_response(ngx_http_request_t *r, yar_request
 
     if(!current_method) {
 
+        ngx_log_error(NGX_LOG_WARN, r->connection->log, 0,
+                      "yar call undefined method %s.",method);
+
         yar_response_free(response);
 
         return NULL;
@@ -177,6 +196,7 @@ yar_response*   ngx_http_yar_get_yar_response(ngx_http_request_t *r, yar_request
 ngx_int_t       ngx_http_yar_send_response(ngx_http_request_t *r, ngx_str_t *reply){
 
     ngx_buf_t   *b;
+
     ngx_chain_t  out;
 
     ngx_uint_t content_length = reply->len;
