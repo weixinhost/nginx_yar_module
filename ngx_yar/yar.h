@@ -10,5 +10,6 @@
 #include "yar_response.h"
 #include "yar_log.h"
 #include "yar_method.h"
+#include "yar_client.h"
 
 #endif //yar.h_H_

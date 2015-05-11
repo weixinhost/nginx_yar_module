@@ -152,7 +152,7 @@ yar_response*   ngx_http_yar_get_yar_response(ngx_http_request_t *r, yar_request
     if(!my_conf->yar_method_handler){
 
         ngx_log_error(NGX_LOG_WARN, r->connection->log, 0,
-                      "cannt open yar_method_path(%s)",(char *)my_conf->yar_method_path.data);
+                      "cannt open yar_method_path(%s):dlerror:%s",(char *)my_conf->yar_method_path.data,my_conf->dlerror);
 
         return NULL;
 
@@ -172,6 +172,7 @@ yar_response*   ngx_http_yar_get_yar_response(ngx_http_request_t *r, yar_request
 
     char real_method[256] = {0};
 
+
     sprintf (real_method,"yar_method_%s",method);
 
     yar_method current_method = (yar_method)dlsym(my_conf->yar_method_handler,real_method);
@@ -186,7 +187,17 @@ yar_response*   ngx_http_yar_get_yar_response(ngx_http_request_t *r, yar_request
         return NULL;
     }
 
+    /*
+    struct timeval now = {0,0};
+    gettimeofday(&now,NULL);
+    printf("\n%d\n",(int)now.tv_usec);
+     */
     current_method(request,response,cookie);
+    /*
+    gettimeofday(&now,NULL);
+    printf("\n%d\n",(int)now.tv_usec);
+    */
+
 
     return response;
 

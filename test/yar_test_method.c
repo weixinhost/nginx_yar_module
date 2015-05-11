@@ -2,6 +2,8 @@
 
 void yar_method_test(yar_request *request, yar_response *response, void *cookie){
 
+    usleep(10000);
+
     yar_packager *misko_success_pack = NULL;
 
     misko_success_pack = yar_pack_start_map(3);
@@ -17,7 +19,9 @@ void yar_method_test(yar_request *request, yar_response *response, void *cookie)
     yar_pack_push_string(misko_success_pack,"count",sizeof("count") -1);
     yar_pack_push_long(misko_success_pack,1);
     yar_response_set_retval(response,misko_success_pack);
+
     yar_pack_free(misko_success_pack);
+
 
 }
 

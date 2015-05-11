@@ -2,7 +2,7 @@ ngx_addon_name=ngx_http_yar_module
 HTTP_MODULES="$HTTP_MODULES ngx_http_yar_module"
 
 ngx_feature="Msgpack Library"
-ngx_feature_libs="-lmsgpack -lngx_yar -lm"
+ngx_feature_libs="-lmsgpack -lngx_yar -lcurl -lm"
 ngx_feature_run=no
 CORE_LIBS="$CORE_LIBS $ngx_feature_libs"
 . auto/feature

@@ -117,6 +117,8 @@ static char* ngx_http_yar_conf_yar_method_path(ngx_conf_t *cf, ngx_command_t *cm
         local_conf->yar_method_handler = (void *) dlopen ((const char *) local_conf->yar_method_path.data,
                                                    RTLD_NOW | RTLD_LOCAL);
 
+        local_conf->dlerror = dlerror();
+
     }
 
     return rv;

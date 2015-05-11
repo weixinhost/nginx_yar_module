@@ -17,6 +17,8 @@ typedef struct
 
     ngx_int_t       timeout;                // for yar_timeout=5;
 
+    char*           dlerror;
+
 } ngx_http_yar_loc_conf_t;
 
 
