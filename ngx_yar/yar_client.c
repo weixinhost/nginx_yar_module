@@ -295,6 +295,8 @@ static yar_response * yar_client_http_caller(yar_client *client, char *method, u
 
     free(request);
 
+    curl_global_init(CURL_GLOBAL_NOTHING);
+
     CURL *curl = curl_easy_init();
 
     curl_easy_setopt(curl, CURLOPT_AUTOREFERER, 1);
@@ -372,7 +374,7 @@ static yar_response * yar_client_http_caller(yar_client *client, char *method, u
         }
 
         curl_easy_cleanup(curl);
-
+        curl_global_cleanup();
     };
 
     return response;

@@ -2,6 +2,11 @@
 #include "ngx_yar_module_handler.h"
 #include <dlfcn.h>
 
+typedef void (*yar_bootstrap_method)(void *config,uint config_len);
+
+typedef void (*yar_finalize_method)(yar_request *request, yar_response *response);
+
+
 extern  ngx_module_t ngx_http_yar_module;
 
 ngx_str_t*      ngx_http_yar_read_client_post_body(ngx_http_request_t *r){
@@ -145,7 +150,7 @@ yar_response*   ngx_http_yar_get_yar_response(ngx_http_request_t *r, yar_request
     char method[256] = {0};
 
     memcpy(method,request->method,request->mlen);
-
+    method[request->mlen] = 0;
 
     ngx_http_yar_loc_conf_t* my_conf = ngx_http_get_module_loc_conf(r, ngx_http_yar_module);
 
@@ -187,17 +192,48 @@ yar_response*   ngx_http_yar_get_yar_response(ngx_http_request_t *r, yar_request
         return NULL;
     }
 
-    /*
-    struct timeval now = {0,0};
-    gettimeofday(&now,NULL);
-    printf("\n%d\n",(int)now.tv_usec);
-     */
-    current_method(request,response,cookie);
-    /*
-    gettimeofday(&now,NULL);
-    printf("\n%d\n",(int)now.tv_usec);
-    */
+    ngx_log_error(NGX_LOG_NOTICE, r->connection->log, 0,
+                  "yar call method %s.",method);
 
+    char bootstrap_method[256] = {0};
+
+    if(my_conf->bootstrap.len > 0){
+
+        memcpy(bootstrap_method,my_conf->bootstrap.data,my_conf->bootstrap.len);
+
+        bootstrap_method[my_conf->bootstrap.len] = 0;
+
+        yar_bootstrap_method bootstrap = (yar_bootstrap_method)dlsym(my_conf->yar_method_handler,bootstrap_method);
+
+        if(bootstrap){
+
+            bootstrap(my_conf->custom_config.data,my_conf->custom_config.len);
+
+        }else{
+
+        }
+
+    }
+
+    current_method(request,response,cookie);
+
+    char finalize_method[256] = {0};
+
+    if(my_conf->finalize.len > 0){
+
+        memcpy(finalize_method,my_conf->finalize.data,my_conf->finalize.len);
+
+        finalize_method[my_conf->finalize.len] = 0;
+
+    }
+
+    yar_finalize_method finalize = (yar_finalize_method)dlsym(my_conf->yar_method_handler,finalize_method);
+
+    if(finalize){
+
+        finalize(request,response);
+
+    }
 
     return response;
 

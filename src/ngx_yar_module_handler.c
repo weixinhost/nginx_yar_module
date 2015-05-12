@@ -5,6 +5,9 @@
 static void* ngx_http_yar_create_loc_conf(ngx_conf_t *cf);
 
 static char* ngx_http_yar_conf_yar_method_path(ngx_conf_t *cf, ngx_command_t *cmd,void *conf);
+static char* ngx_http_yar_conf_yar_bootstrap(ngx_conf_t *cf, ngx_command_t *cmd,void *conf);
+static char* ngx_http_yar_conf_yar_finalize(ngx_conf_t *cf, ngx_command_t *cmd,void *conf);
+static char* ngx_http_yar_conf_yar_custom_config(ngx_conf_t *cf, ngx_command_t *cmd,void *conf);
 static char* ngx_http_yar_conf_on(ngx_conf_t *cf, ngx_command_t *cmd,void *conf);
 static char* ngx_http_yar_conf_debug(ngx_conf_t *cf, ngx_command_t *cmd,void *conf);
 static char* ngx_http_yar_conf_timeout(ngx_conf_t *cf, ngx_command_t *cmd,void *conf);
@@ -22,6 +25,48 @@ static ngx_command_t ngx_http_yar_commands[] = {
                 offsetof(ngx_http_yar_loc_conf_t, yar_method_path),
                 NULL
         },
+
+        {
+                ngx_string("yar_bootstrap"),
+                NGX_HTTP_LOC_CONF|NGX_CONF_TAKE1,
+                ngx_http_yar_conf_yar_bootstrap,
+                NGX_HTTP_LOC_CONF_OFFSET,
+                offsetof(ngx_http_yar_loc_conf_t, bootstrap),
+                NULL
+        },
+
+        {
+                ngx_string("yar_finalize"),
+                NGX_HTTP_LOC_CONF|NGX_CONF_TAKE1,
+                ngx_http_yar_conf_yar_finalize,
+                NGX_HTTP_LOC_CONF_OFFSET,
+                offsetof(ngx_http_yar_loc_conf_t, finalize),
+                NULL
+        },
+
+
+
+        {
+                ngx_string("yar_custom_config"),
+                NGX_HTTP_LOC_CONF|NGX_CONF_TAKE1,
+                ngx_http_yar_conf_yar_custom_config,
+                NGX_HTTP_LOC_CONF_OFFSET,
+                offsetof(ngx_http_yar_loc_conf_t, custom_config),
+                NULL
+        },
+
+
+
+
+        {
+                ngx_string("yar_method_path"),
+                NGX_HTTP_LOC_CONF|NGX_CONF_TAKE1,
+                ngx_http_yar_conf_yar_method_path,
+                NGX_HTTP_LOC_CONF_OFFSET,
+                offsetof(ngx_http_yar_loc_conf_t, yar_method_path),
+                NULL
+        },
+
 
         {
                 ngx_string("yar_on"),
@@ -124,6 +169,33 @@ static char* ngx_http_yar_conf_yar_method_path(ngx_conf_t *cf, ngx_command_t *cm
     return rv;
 
 }
+
+static char* ngx_http_yar_conf_yar_bootstrap(ngx_conf_t *cf, ngx_command_t *cmd,void *conf){
+
+    ngx_http_yar_loc_conf_t *local_conf = conf;
+    char* rv = ngx_conf_set_str_slot(cf, cmd, local_conf);
+    return rv;
+
+}
+
+static char* ngx_http_yar_conf_yar_finalize(ngx_conf_t *cf, ngx_command_t *cmd,void *conf){
+
+    ngx_http_yar_loc_conf_t *local_conf = conf;
+
+    char* rv = ngx_conf_set_str_slot(cf, cmd, local_conf);
+
+    return rv;
+
+}
+
+static char* ngx_http_yar_conf_yar_custom_config(ngx_conf_t *cf, ngx_command_t *cmd,void *conf){
+
+    ngx_http_yar_loc_conf_t *local_conf = conf;
+    char* rv = ngx_conf_set_str_slot(cf, cmd, local_conf);
+    return rv;
+
+}
+
 
 static char* ngx_http_yar_conf_on(ngx_conf_t *cf, ngx_command_t *cmd,void *conf){
 
