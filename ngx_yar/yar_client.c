@@ -250,8 +250,8 @@ static yar_response * yar_client_http_caller(yar_client *client, char *method, u
     int	bytes_sent, select_result;
     uint bytes_left, totolly_read;
     yar_header *response_header = NULL;
-    yar_response *response;
-    yar_request  *request;
+    yar_response *response = NULL;
+    yar_request  *request = NULL;
     yar_header header = {0};
     yar_payload payload = {0};
     struct timeval tv;
@@ -279,9 +279,9 @@ static yar_response * yar_client_http_caller(yar_client *client, char *method, u
     }
 
     if (!yar_request_pack(request, &payload, sizeof(yar_header) + sizeof(YAR_PACKAGER))) {
-
         yar_request_free(request);
         free(request);
+
         return NULL;
     }
 
@@ -334,7 +334,7 @@ static yar_response * yar_client_http_caller(yar_client *client, char *method, u
 
     }
 
-    free(payload.data);
+
 
     response_header = (yar_header *)client->write_buffer.buf;
 
@@ -364,6 +364,10 @@ static yar_response * yar_client_http_caller(yar_client *client, char *method, u
 
     clean_curl :
     {
+
+        free(payload.data);
+
+
         if(client->write_buffer.buf) {
 
             free (client->write_buffer.buf);

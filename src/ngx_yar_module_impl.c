@@ -6,7 +6,6 @@ typedef void (*yar_bootstrap_method)(void *config,uint config_len);
 
 typedef void (*yar_finalize_method)(yar_request *request, yar_response *response);
 
-
 extern  ngx_module_t ngx_http_yar_module;
 
 ngx_str_t*      ngx_http_yar_read_client_post_body(ngx_http_request_t *r){
@@ -21,7 +20,7 @@ ngx_str_t*      ngx_http_yar_read_client_post_body(ngx_http_request_t *r){
 
         ngx_log_error(NGX_LOG_WARN, r->connection->log, 0,
                       "read client request body error.");
-
+                
         return NULL;
     }
 
