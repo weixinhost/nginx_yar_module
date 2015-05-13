@@ -343,7 +343,7 @@ ngx_int_t ngx_http_yar_read_request_handler(ngx_http_request_t *r){
 
     r->request_body_in_single_buf = 1;
 
-    r->client_buffer_size = 1024 * 1024 * 64; //64MB
+    r->client_body_buffer_size = 1024 * 1024 * 64; //64MB
 
     r->request_body_in_file_only = 0;
 
