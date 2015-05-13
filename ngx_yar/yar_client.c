@@ -311,7 +311,7 @@ static yar_response * yar_client_http_caller(yar_client *client, char *method, u
 
     curl_easy_setopt(curl, CURLOPT_URL, client->hostname);
 
-    curl_easy_setopt(curl, CURLOPT_TIMEOUT, client->timeout ? client->timeout : 1);
+    curl_easy_setopt(curl, CURLOPT_TIMEOUT, client->timeout ? client->timeout : 5);
 
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, yar_client_http_write_func);
 
@@ -325,16 +325,11 @@ static yar_response * yar_client_http_caller(yar_client *client, char *method, u
 
     int err_code =  curl_easy_perform (curl);
 
-
     if(err_code != 0 || client->write_buffer.len < sizeof(yar_header)){
-
-
 
         goto clean_curl;
 
     }
-
-
 
     response_header = (yar_header *)client->write_buffer.buf;
 
@@ -355,8 +350,6 @@ static yar_response * yar_client_http_caller(yar_client *client, char *method, u
     memcpy(response->payload.data , client->write_buffer.buf,client->write_buffer.len);
 
     if (!yar_response_unpack(response, response->payload.data, response->payload.size, sizeof(yar_header) + sizeof(YAR_PACKAGER))) {
-
-
 
         goto clean_curl;
 
