@@ -74,6 +74,7 @@ ngx_str_t*      ngx_http_yar_read_client_post_body(ngx_http_request_t *r){
 
     return body;
 
+
 }
 
 yar_request*    ngx_http_yar_get_yar_request(ngx_http_request_t *r,ngx_str_t *body){
@@ -172,6 +173,8 @@ yar_response*   ngx_http_yar_get_yar_response(ngx_http_request_t *r, yar_request
 
     response->payload.size = 0;
 
+    response->payload.data = NULL;
+
     char *cookie = NULL;
 
     char real_method[256] = {0};
@@ -229,7 +232,6 @@ yar_response*   ngx_http_yar_get_yar_response(ngx_http_request_t *r, yar_request
     yar_finalize_method finalize = (yar_finalize_method)dlsym(my_conf->yar_method_handler,finalize_method);
 
     if(finalize){
-
         finalize(request,response);
 
     }

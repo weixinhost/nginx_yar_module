@@ -1,4 +1,19 @@
 #include <ngx_yar/yar.h>
+#include <stdio.h>
+#include <string.h>
+
+/* somewhat unix-specific */
+#include <sys/time.h>
+#include <unistd.h>
+
+/* curl stuff */
+#include <curl/curl.h>
+
+
+#define HANDLECOUNT 1   /* Number of simultaneous transfers */
+#define HTTP_HANDLE 0   /* Index for the HTTP transfer */
+#define FTP_HANDLE 1    /* Index for the FTP transfer */
+
 
 void yar_method_test(yar_request *request, yar_response *response, void *cookie){
 
@@ -55,6 +70,12 @@ void yar_method_echo(yar_request *request,yar_response *response, void *cookie){
 
     yar_response_set_retval(response,packager);
     yar_pack_free(packager);
+
+}
+
+void yar_method_http(yar_request *request, yar_response *response, void *cookie){
+
+
 
 }
 

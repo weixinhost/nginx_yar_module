@@ -1,6 +1,7 @@
 #include "ngx_yar_module_handler.h"
 #include "ngx_yar_module_impl.h"
 #include <dlfcn.h>
+#include <mcheck.h>
 
 static void* ngx_http_yar_create_loc_conf(ngx_conf_t *cf);
 
@@ -234,13 +235,19 @@ static char* ngx_http_yar_conf_timeout(ngx_conf_t *cf, ngx_command_t *cmd,void *
 
 void ngx_http_yar_handler(ngx_http_request_t *r){
 
+
+
     ngx_str_t error;
+
+
+
 
     ngx_str_t *client_request_body = ngx_http_yar_read_client_post_body(r);
 
     yar_request *request = NULL;
 
     yar_response *response = NULL;
+
 
 
     if(!client_request_body || client_request_body->len < sizeof(yar_header)){
