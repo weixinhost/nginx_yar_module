@@ -80,6 +80,7 @@ int yar_response_pack(yar_response *response, yar_payload *payload, int extra_by
 } 
 /* }}} */
 
+
 int yar_response_unpack(yar_response *response, char *payload, uint len, int extra_bytes) /* {{{ */ {
 	uint size;
 	const yar_data *obj;
