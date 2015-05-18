@@ -1,11 +1,11 @@
  cmake_minimum_required(VERSION 2.8)
-project(ngx_yar)
-INCLUDE(CheckIncludeFiles)
-CHECK_INCLUDE_FILES(msgpack/msgpack.h HAVE_MSGPACK)
 
 SET(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -Wall -g -ggdb")
 SET(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")
 
+project(ngx_yar)
+INCLUDE(CheckIncludeFiles)
+CHECK_INCLUDE_FILES(msgpack/msgpack.h HAVE_MSGPACK)
 
 IF(NOT HAVA_MSGPACK)
     MESSAGE("library `msgpack` not found.")
