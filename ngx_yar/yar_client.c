@@ -390,6 +390,7 @@ yar_client * yar_client_init(char *hostname) /* {{{ */ {
     client->protocol = YAR_CLIENT_PROTOCOL_SOCK;
     client->write_buffer.buf = NULL;
     client->write_buffer.len = 0;
+    client->timeout = 0;
 
     if (strncasecmp(hostname, "http://", sizeof("http://") -1) == 0
         || strncasecmp(hostname, "https://", sizeof("https://") -1) == 0) {

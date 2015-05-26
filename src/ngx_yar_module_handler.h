@@ -23,7 +23,7 @@ typedef struct
 
     ngx_str_t       finalize;
 
-    char*           dlerror;
+    char *       dlerror;
 
 } ngx_http_yar_loc_conf_t;
 

@@ -155,7 +155,6 @@ yar_response*   ngx_http_yar_get_yar_response(ngx_http_request_t *r, yar_request
     ngx_http_yar_loc_conf_t* my_conf = ngx_http_get_module_loc_conf(r, ngx_http_yar_module);
 
     if(!my_conf->yar_method_handler){
-
         ngx_log_error(NGX_LOG_WARN, r->connection->log, 0,
                       "cannt open yar_method_path(%s):dlerror:%s",(char *)my_conf->yar_method_path.data,my_conf->dlerror);
 
@@ -232,6 +231,7 @@ yar_response*   ngx_http_yar_get_yar_response(ngx_http_request_t *r, yar_request
     yar_finalize_method finalize = (yar_finalize_method)dlsym(my_conf->yar_method_handler,finalize_method);
 
     if(finalize){
+
         finalize(request,response);
 
     }
