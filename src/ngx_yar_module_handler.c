@@ -220,14 +220,14 @@ void set_reply(ngx_str_t *reply){
 
     reply_data = reply;
 }
- */
+
 
 ngx_str_t *get_reply(){
 
     return reply_data;
 
 }
-
+ */
 
 static char* ngx_http_yar_conf_debug(ngx_conf_t *cf, ngx_command_t *cmd,void *conf){
 
