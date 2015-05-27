@@ -327,7 +327,7 @@ void ngx_http_yar_handler(ngx_http_request_t *r){
 
     reply.len = response->payload.size;
 
-    ngx_http_yar_send_response(r,reply);
+    ngx_http_yar_send_response(r,&reply);
 
 
     goto clean_resource;
