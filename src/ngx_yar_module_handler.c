@@ -385,7 +385,7 @@ ngx_int_t ngx_http_yar_read_request_handler(ngx_http_request_t *r){
 
     if(reply){
 
-       return ngx_http_yar_send_response(r,reply);
+        ngx_http_yar_send_response(r,reply);
 
     }
 
