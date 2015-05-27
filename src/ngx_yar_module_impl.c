@@ -250,29 +250,10 @@ ngx_int_t       ngx_http_yar_send_response(ngx_http_request_t *r, ngx_str_t *rep
 
     ngx_str_set (&r->headers_out.content_type, "application/msgpack");
 
-    ngx_chain_t  *out1 = (ngx_chain_t*)ngx_pcalloc (r->pool, sizeof (ngx_chain_t));
-
-    char *a  = (char*)ngx_pcalloc (r->pool, sizeof (char)*50000);
-    int i;
-    for(i=0;i<50000;i++){
-        a[i] = 'b';
-    }
-
-    a[50000] = 0;
-
-    ngx_buf_t *b1 = ngx_pcalloc (r->pool, sizeof (ngx_buf_t));
-
-    b1->pos = (u_char *)a;
-    b1->last = (u_char *)(a + 50000);
-    b1->memory = 1;
-    b1->last_buf = 1;
-
-    out1->buf = b1;
-    out1->next = NULL;
     b = ngx_pcalloc (r->pool, sizeof (ngx_buf_t));
 
     out.buf = b;
-    out.next = out1;
+    out.next = NULL;
 
     b->pos = reply->data;
     b->last = reply->data + content_length;
