@@ -311,11 +311,11 @@ void ngx_http_yar_handler(ngx_http_request_t *r){
 
     memcpy(response->payload.data + sizeof(yar_header), YAR_PACKAGER, sizeof(YAR_PACKAGER));
 
-
+    /*
     ngx_str_t *reply = ngx_pcalloc (r->pool, sizeof (ngx_str_t));
     u_char *data  = ngx_pcalloc (r->pool, sizeof (u_char) * response->payload.size);
     memcpy(data,response->payload.data,response->payload.size);
-
+    */
     /*
     reply->data = data;
     reply->len = response->payload.size;
@@ -366,7 +366,7 @@ void ngx_http_yar_handler(ngx_http_request_t *r){
 
 ngx_int_t ngx_http_yar_read_request_handler(ngx_http_request_t *r){
 
-    set_reply(NULL);
+   // set_reply(NULL);
 
     r->request_body_in_single_buf = 1;
 
