@@ -263,9 +263,9 @@ ngx_int_t       ngx_http_yar_send_response(ngx_http_request_t *r, ngx_str_t *rep
     r->headers_out.status = NGX_HTTP_OK;
     r->headers_out.content_length_n = content_length;
     ngx_http_send_header (r);
-    ngx_http_output_filter (r, &out);
+   int rc =  ngx_http_output_filter (r, &out);
 
-    ngx_http_finalize_request (r, NGX_OK);
+    ngx_http_finalize_request (r, rc);
 
     return 1;
 
