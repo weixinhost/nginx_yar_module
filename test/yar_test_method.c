@@ -73,9 +73,41 @@ void yar_method_echo(yar_request *request,yar_response *response, void *cookie){
 
 }
 
-void yar_method_http(yar_request *request, yar_response *response, void *cookie){
 
 
+void yar_method_send_big_data(yar_request *request, yar_response *response, void *cookie){
+
+    int size = 10000000;
+
+    char *log = (char *)calloc(sizeof(char) * size,1);
+
+    int i=0;
+
+    for(i=0;i<size;i++){
+
+       log[i] = 'a';
+
+    }
+
+    log[size] = 0;
+
+    yar_packager *misko_success_pack = NULL;
+
+    misko_success_pack = yar_pack_start_map(3);
+    yar_pack_push_string(misko_success_pack,"err_code",sizeof("err_code") -1);
+    yar_pack_push_long(misko_success_pack,0);
+
+    yar_pack_push_string(misko_success_pack,"err_msg",sizeof("err_msg") -1);
+    yar_pack_push_string(misko_success_pack,"success",sizeof("success") -1);
+
+    yar_pack_push_string(misko_success_pack,"data",sizeof("data") -1);
+    yar_pack_push_map(misko_success_pack,1);
+
+    yar_pack_push_string(misko_success_pack,"count",sizeof("count") -1);
+    yar_pack_push_string(misko_success_pack,log,strlen(log));
+    yar_response_set_retval(response,misko_success_pack);
+
+    yar_pack_free(misko_success_pack);
 
 }
 
