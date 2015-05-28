@@ -316,6 +316,7 @@ void ngx_http_yar_handler(ngx_http_request_t *r){
 
     ngx_str_t *reply = ngx_pcalloc (r->pool, sizeof (ngx_str_t));
     u_char *data  = ngx_pcalloc (r->pool, sizeof (u_char) * response->payload.size);
+    reply->len = response->payload.size;
     memcpy(data,response->payload.data,response->payload.size);
     ngx_http_yar_send_response(r,reply);
 
