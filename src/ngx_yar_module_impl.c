@@ -254,12 +254,12 @@ yar_response*   ngx_http_yar_get_yar_response(ngx_http_request_t *r, yar_request
     if(used_msec > 100){
 
         ngx_log_error(NGX_LOG_WARN, r->connection->log, 0,
-                      "yar call method %s too slow. [%.3f]",method,used_msec);
+                      "yar call method %s too slow. [%.3f ms]",method,used_msec);
 
     }else{
 
         ngx_log_error(NGX_LOG_NOTICE, r->connection->log, 0,
-                      "yar call method %s. [%.3f]",method,used_msec);
+                      "yar call method %s. [%.3f ms]",method,used_msec);
 
     }
 
