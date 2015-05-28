@@ -272,7 +272,7 @@ ngx_int_t       ngx_http_yar_send_response(ngx_http_request_t *r, ngx_str_t *rep
 
     ngx_buf_t   *b;
 
-    ngx_chain_t  out;
+    ngx_chain_t  *out = ngx_pcalloc (r->pool, sizeof (ngx_chain_t));;
 
     ngx_uint_t content_length = reply->len;
 
@@ -282,9 +282,9 @@ ngx_int_t       ngx_http_yar_send_response(ngx_http_request_t *r, ngx_str_t *rep
 
     b = ngx_pcalloc (r->pool, sizeof (ngx_buf_t));
 
-    out.buf = b;
+    out->buf = b;
 
-    out.next = NULL;
+    out->next = NULL;
 
     b->pos = reply->data;
     b->last = reply->data + content_length;
@@ -297,7 +297,7 @@ ngx_int_t       ngx_http_yar_send_response(ngx_http_request_t *r, ngx_str_t *rep
 
     ngx_http_send_header (r);
 
-    int rc =  ngx_http_output_filter (r, &out);
+    int rc =  ngx_http_output_filter (r, out);
 
     ngx_http_finalize_request (r, rc);
 
