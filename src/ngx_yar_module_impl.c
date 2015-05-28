@@ -276,6 +276,8 @@ ngx_int_t       ngx_http_yar_send_response(ngx_http_request_t *r, ngx_str_t *rep
 
     ngx_uint_t content_length = reply->len;
 
+    printf("%d\n\n",(int)content_length);
+
     ngx_str_set (&r->headers_out.content_type, "application/msgpack");
 
     b = ngx_pcalloc (r->pool, sizeof (ngx_buf_t));
