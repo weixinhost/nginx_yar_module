@@ -77,7 +77,7 @@ void yar_method_echo(yar_request *request,yar_response *response, void *cookie){
 
 void yar_method_send_big_data(yar_request *request, yar_response *response, void *cookie){
 
-    int size = 10000000;
+    int size = 100000;
 
     char *log = (char *)calloc(sizeof(char) * size,1);
 
