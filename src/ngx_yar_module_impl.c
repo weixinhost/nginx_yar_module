@@ -274,7 +274,7 @@ ngx_int_t       ngx_http_yar_send_response(ngx_http_request_t *r, ngx_str_t *rep
 
     ngx_chain_t  out;
 
-    ngx_uint_t content_length = reply->len;
+    //ngx_uint_t content_length = reply->len;
 
     ngx_str_set (&r->headers_out.content_type, "application/msgpack");
 
