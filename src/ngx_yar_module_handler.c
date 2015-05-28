@@ -213,7 +213,7 @@ static char* ngx_http_yar_conf_on(ngx_conf_t *cf, ngx_command_t *cmd,void *conf)
     return NULL;
 }
 
-
+/*
 ngx_str_t *reply_data = NULL;
 
 void set_reply(ngx_str_t *reply){
@@ -226,6 +226,7 @@ ngx_str_t *get_reply(){
     return reply_data;
 
 }
+ */
 
 static char* ngx_http_yar_conf_debug(ngx_conf_t *cf, ngx_command_t *cmd,void *conf){
 
@@ -316,11 +317,13 @@ void ngx_http_yar_handler(ngx_http_request_t *r){
     ngx_str_t *reply = ngx_pcalloc (r->pool, sizeof (ngx_str_t));
     u_char *data  = ngx_pcalloc (r->pool, sizeof (u_char) * response->payload.size);
     memcpy(data,response->payload.data,response->payload.size);
+    ngx_http_yar_send_response(r,&reply);
 
-
+    /*
     reply->data = data;
     reply->len = response->payload.size;
     set_reply(reply);
+     */
 
     /*
     ngx_str_t reply;
@@ -328,7 +331,7 @@ void ngx_http_yar_handler(ngx_http_request_t *r){
 
     reply.len = response->payload.size;
 
-    ngx_http_yar_send_response(r,&reply);
+
     */
 
     goto clean_resource;
@@ -367,7 +370,6 @@ void ngx_http_yar_handler(ngx_http_request_t *r){
 
 ngx_int_t ngx_http_yar_read_request_handler(ngx_http_request_t *r){
 
-    set_reply(NULL);
 
     r->request_body_in_single_buf = 1;
 
@@ -377,15 +379,9 @@ ngx_int_t ngx_http_yar_read_request_handler(ngx_http_request_t *r){
 
     rc = ngx_http_read_client_request_body(r,ngx_http_yar_handler);
 
-    if(rc >= NGX_HTTP_SPECIAL_RESPONSE) {
+    if(rc == NGX_ERROR || rc >= NGX_HTTP_SPECIAL_RESPONSE) {
+
         return rc;
-    }
-
-    ngx_str_t *reply = get_reply ();
-
-    if(reply){
-
-       return ngx_http_yar_send_response(r,reply);
 
     }
 

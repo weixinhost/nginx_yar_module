@@ -1,6 +1,7 @@
 #include "ngx_yar_module_impl.h"
 #include "ngx_yar_module_handler.h"
 #include <dlfcn.h>
+#include <sys/time.h>
 
 typedef void (*yar_bootstrap_method)(void *config,uint config_len);
 
@@ -193,8 +194,12 @@ yar_response*   ngx_http_yar_get_yar_response(ngx_http_request_t *r, yar_request
         return NULL;
     }
 
-    ngx_log_error(NGX_LOG_NOTICE, r->connection->log, 0,
-                  "yar call method %s.",method);
+
+    struct timeval start;
+    struct timeval end;
+
+    gettimeofday(&start, NULL);
+
 
     char bootstrap_method[256] = {0};
 
@@ -236,9 +241,32 @@ yar_response*   ngx_http_yar_get_yar_response(ngx_http_request_t *r, yar_request
 
     }
 
+    gettimeofday(&end, NULL);
+
+
+    int used_sec = end.tv_sec - start.tv_sec;
+    int used_usec = end.tv_usec - start.tv_usec;
+
+    float used_msec = ((float)(used_sec * 1000 * 1000) +used_usec) / 1000;
+
+    //todo swtich to nginx config
+
+    if(used_msec > 100){
+
+        ngx_log_error(NGX_LOG_WARN, r->connection->log, 0,
+                      "yar call method %s too slow. [%.3f ms]",method,used_msec);
+
+    }else{
+
+        ngx_log_error(NGX_LOG_NOTICE, r->connection->log, 0,
+                      "yar call method %s. [%.3f ms]",method,used_msec);
+
+    }
+
     return response;
 
 }
+
 
 ngx_int_t       ngx_http_yar_send_response(ngx_http_request_t *r, ngx_str_t *reply){
 
@@ -261,13 +289,13 @@ ngx_int_t       ngx_http_yar_send_response(ngx_http_request_t *r, ngx_str_t *rep
     b->last_buf = 1;
     b->sync = 1;
     r->headers_out.status = NGX_HTTP_OK;
-   // r->headers_out.content_length_n = content_length;
+    r->headers_out.content_length_n = content_length;
     ngx_http_send_header (r);
-
     int rc =  ngx_http_output_filter (r, &out);
 
     ngx_http_finalize_request (r, NGX_OK);
 
     return rc;
+
 
 }
