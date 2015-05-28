@@ -321,6 +321,7 @@ void ngx_http_yar_handler(ngx_http_request_t *r){
 
     ngx_http_yar_send_response(r,reply);
 
+
     /*
     reply->data = data;
     reply->len = response->payload.size;
