@@ -274,7 +274,7 @@ ngx_int_t       ngx_http_yar_send_response(ngx_http_request_t *r, ngx_str_t *rep
 
     ngx_chain_t  out;
 
-    //ngx_uint_t content_length = reply->len;
+    ngx_uint_t content_length = reply->len;
 
     ngx_str_set (&r->headers_out.content_type, "application/msgpack");
 
@@ -284,12 +284,13 @@ ngx_int_t       ngx_http_yar_send_response(ngx_http_request_t *r, ngx_str_t *rep
     out.next = NULL;
 
     b->pos = reply->data;
-    b->last = reply->data + reply->len;
+    b->last = reply->data + content_length;
     b->memory = 1;
     b->last_buf = 1;
     b->sync = 1;
     r->headers_out.status = NGX_HTTP_OK;
 
+    r->headers_out.content_length_n = 1;
 
     ngx_http_send_header (r);
 
