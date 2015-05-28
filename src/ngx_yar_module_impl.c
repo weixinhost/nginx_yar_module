@@ -284,7 +284,7 @@ ngx_int_t       ngx_http_yar_send_response(ngx_http_request_t *r, ngx_str_t *rep
     out.next = NULL;
 
     b->pos = reply->data;
-    b->last = reply->data + content_length;
+    b->last = reply->data + reply->len;
     b->memory = 1;
     b->last_buf = 1;
     b->sync = 1;
