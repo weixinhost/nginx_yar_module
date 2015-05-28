@@ -317,6 +317,7 @@ void ngx_http_yar_handler(ngx_http_request_t *r){
     u_char *data  = ngx_pcalloc (r->pool, sizeof (u_char) * response->payload.size);
     reply->len = response->payload.size;
     memcpy(data,response->payload.data,response->payload.size);
+    reply->data = data;
 
     ngx_http_yar_send_response(r,reply);
 
@@ -383,9 +384,12 @@ ngx_int_t ngx_http_yar_read_request_handler(ngx_http_request_t *r){
 
     if(rc == NGX_ERROR || rc >= NGX_HTTP_SPECIAL_RESPONSE) {
 
-       // return rc;
+        return rc;
 
     }
+
+
+
 
     return NGX_DONE;
 }
