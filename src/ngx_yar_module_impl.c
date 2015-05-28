@@ -299,7 +299,7 @@ ngx_int_t       ngx_http_yar_send_response(ngx_http_request_t *r, ngx_str_t *rep
 
     int rc =  ngx_http_output_filter (r, out);
 
- //   ngx_http_finalize_request (r, rc);
+    ngx_http_finalize_request (r, rc);
 
     return rc;
 
