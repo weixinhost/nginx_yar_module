@@ -281,16 +281,17 @@ ngx_int_t       ngx_http_yar_send_response(ngx_http_request_t *r, ngx_str_t *rep
     b = ngx_pcalloc (r->pool, sizeof (ngx_buf_t));
 
     out.buf = b;
+
     out.next = NULL;
 
     b->pos = reply->data;
     b->last = reply->data + content_length;
     b->memory = 1;
     b->last_buf = 1;
-    b->sync = 1;
+
     r->headers_out.status = NGX_HTTP_OK;
 
-    r->headers_out.content_length_n = 1;
+    r->headers_out.content_length_n = content_length;
 
     ngx_http_send_header (r);
 
