@@ -107,7 +107,7 @@ yar_request*    ngx_http_yar_get_yar_request(ngx_http_request_t *r,ngx_str_t *bo
 
     protocol_body.len = body->len - protocol_len;
 
-    volatile yar_request *request =  (yar_request *)ngx_pnalloc(r->pool,sizeof(yar_request));
+    yar_request *request =  (yar_request *)ngx_pnalloc(r->pool,sizeof(yar_request));
 
     memset(request,0,sizeof(yar_request));
 
@@ -176,7 +176,7 @@ yar_response*   ngx_http_yar_get_yar_response(ngx_http_request_t *r, yar_request
 
     response->payload.data = NULL;
 
-    volatile char *cookie = NULL;
+    char *cookie = NULL;
 
     char real_method[256] = {0};
 
@@ -241,7 +241,7 @@ yar_response*   ngx_http_yar_get_yar_response(ngx_http_request_t *r, yar_request
 
     }else{
 
-        current_method(request,response,cookie);
+        current_method((yar_request *)request,(yar_response *)response,cookie);
 
     }
 
@@ -260,7 +260,7 @@ yar_response*   ngx_http_yar_get_yar_response(ngx_http_request_t *r, yar_request
 
     if(finalize){
 
-        finalize(request,response);
+        finalize((yar_request *)request,(yar_response *)response);
 
     }
 
