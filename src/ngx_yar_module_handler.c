@@ -12,7 +12,7 @@ static char* ngx_http_yar_conf_yar_custom_config(ngx_conf_t *cf, ngx_command_t *
 static char* ngx_http_yar_conf_on(ngx_conf_t *cf, ngx_command_t *cmd,void *conf);
 static char* ngx_http_yar_conf_debug(ngx_conf_t *cf, ngx_command_t *cmd,void *conf);
 static char* ngx_http_yar_conf_timeout(ngx_conf_t *cf, ngx_command_t *cmd,void *conf);
-
+static char* ngx_http_yar_conf_slow_timeout(ngx_conf_t *cf, ngx_command_t *cmd,void *conf);
 ngx_int_t ngx_http_yar_read_request_handler(ngx_http_request_t *r);
 void ngx_http_yar_handler(ngx_http_request_t *r);
 
@@ -88,8 +88,18 @@ static ngx_command_t ngx_http_yar_commands[] = {
         },
 
         {
+                ngx_string("yar_slow_timeout"),
+                NGX_HTTP_LOC_CONF|NGX_CONF_TAKE1,
+                ngx_http_yar_conf_slow_timeout,
+                NGX_HTTP_LOC_CONF_OFFSET,
+                offsetof(ngx_http_yar_loc_conf_t, slow_timeout),
+                NULL
+        },
+
+
+        {
                 ngx_string("yar_timeout"),
-                NGX_HTTP_LOC_CONF|NGX_CONF_NOARGS|NGX_CONF_TAKE1,
+                NGX_HTTP_LOC_CONF|NGX_CONF_TAKE1,
                 ngx_http_yar_conf_timeout,
                 NGX_HTTP_LOC_CONF_OFFSET,
                 offsetof(ngx_http_yar_loc_conf_t, timeout),
@@ -97,8 +107,10 @@ static ngx_command_t ngx_http_yar_commands[] = {
         },
 
 
+
         ngx_null_command
 };
+
 
 
 static ngx_http_module_t ngx_http_yar_module_ctx = {
@@ -148,6 +160,8 @@ static void *ngx_http_yar_create_loc_conf(ngx_conf_t *cf)
     local_conf->on      = 0;
 
     local_conf->debug   = 0;
+
+    local_conf->slow_timeout = NGX_CONF_UNSET;
 
     return local_conf;
 }
@@ -213,7 +227,7 @@ static char* ngx_http_yar_conf_on(ngx_conf_t *cf, ngx_command_t *cmd,void *conf)
     return NULL;
 }
 
-
+/*
 ngx_str_t *reply_data = NULL;
 
 void set_reply(ngx_str_t *reply){
@@ -221,13 +235,12 @@ void set_reply(ngx_str_t *reply){
     reply_data = reply;
 }
 
-
 ngx_str_t *get_reply(){
 
     return reply_data;
 
 }
-
+ */
 
 static char* ngx_http_yar_conf_debug(ngx_conf_t *cf, ngx_command_t *cmd,void *conf){
 
@@ -247,6 +260,16 @@ static char* ngx_http_yar_conf_timeout(ngx_conf_t *cf, ngx_command_t *cmd,void *
 
     return NULL;
 }
+
+static char* ngx_http_yar_conf_slow_timeout(ngx_conf_t *cf, ngx_command_t *cmd,void *conf){
+
+
+    char* rt = ngx_conf_set_num_slot(cf, cmd, conf); //调用ngx_conf_set_num_slot 处理ngx_int_t类型的变量
+
+    return rt;
+}
+
+
 
 void ngx_http_yar_handler(ngx_http_request_t *r){
 
@@ -314,25 +337,15 @@ void ngx_http_yar_handler(ngx_http_request_t *r){
     memcpy(response->payload.data + sizeof(yar_header), YAR_PACKAGER, sizeof(YAR_PACKAGER));
 
 
-
     ngx_str_t *reply = ngx_pcalloc (r->pool, sizeof (ngx_str_t));
+
     u_char *data  = ngx_pcalloc (r->pool, sizeof (u_char) * response->payload.size);
-    memcpy(data,response->payload.data,response->payload.size);
-
-
-    reply->data = data;
     reply->len = response->payload.size;
-    set_reply(reply);
 
-    /*
+    memcpy(data,response->payload.data,response->payload.size);
+    reply->data = data;
 
-    ngx_str_t reply;
-    reply.data = (u_char *)response->payload.data;
-
-    reply.len = response->payload.size;
-
-    ngx_http_yar_send_response(r,&reply);
-     */
+    ngx_http_yar_send_response(r,reply);
 
     goto clean_resource;
 
@@ -370,7 +383,6 @@ void ngx_http_yar_handler(ngx_http_request_t *r){
 
 ngx_int_t ngx_http_yar_read_request_handler(ngx_http_request_t *r){
 
-    set_reply(NULL);
 
     r->request_body_in_single_buf = 1;
 
@@ -380,19 +392,14 @@ ngx_int_t ngx_http_yar_read_request_handler(ngx_http_request_t *r){
 
     rc = ngx_http_read_client_request_body(r,ngx_http_yar_handler);
 
-    if(rc >= NGX_HTTP_SPECIAL_RESPONSE) {
+    if(rc == NGX_ERROR || rc >= NGX_HTTP_SPECIAL_RESPONSE) {
+
         return rc;
-    }
-
-
-    ngx_str_t *reply = get_reply ();
-
-    if(reply){
-
-        ngx_http_yar_send_response(r,reply);
 
     }
 
 
-    return NGX_OK;
+
+
+    return NGX_DONE;
 }

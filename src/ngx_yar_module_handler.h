@@ -17,6 +17,8 @@ typedef struct
 
     ngx_int_t       timeout;                // for yar_timeout=5;
 
+    ngx_int_t       slow_timeout;           // for yar_slow_timeout = 200    ms
+
     ngx_str_t       custom_config;
 
     ngx_str_t       bootstrap;

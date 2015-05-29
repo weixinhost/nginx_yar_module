@@ -249,9 +249,7 @@ yar_response*   ngx_http_yar_get_yar_response(ngx_http_request_t *r, yar_request
 
     float used_msec = ((float)(used_sec * 1000 * 1000) +used_usec) / 1000;
 
-    //todo swtich to nginx config
-
-    if(used_msec > 100){
+    if(my_conf->slow_timeout > 0 && used_msec > my_conf->slow_timeout){
 
         ngx_log_error(NGX_LOG_WARN, r->connection->log, 0,
                       "yar call method %s too slow. [%.3f ms]",method,used_msec);
@@ -267,33 +265,35 @@ yar_response*   ngx_http_yar_get_yar_response(ngx_http_request_t *r, yar_request
 
 }
 
+
 ngx_int_t       ngx_http_yar_send_response(ngx_http_request_t *r, ngx_str_t *reply){
 
-    ngx_buf_t   *b;
+    ngx_buf_t   *b = NULL;
 
-    ngx_chain_t  out;
+    ngx_chain_t  *out = ngx_pcalloc (r->pool, sizeof (ngx_chain_t));;
 
     ngx_uint_t content_length = reply->len;
 
     ngx_str_set (&r->headers_out.content_type, "application/msgpack");
 
-    b = ngx_pcalloc (r->pool, sizeof (ngx_buf_t));
+      b = ngx_create_temp_buf(r->pool, content_length);
+      memcpy(b->pos,reply->data,content_length);
+      b->last = b->pos + content_length;
+      b->last_buf = 1;
 
-    out.buf = b;
-    out.next = NULL;
+    out->buf = b;
 
-    b->pos = reply->data;
-    b->last = reply->data + content_length;
-    b->memory = 1;
-    b->last_buf = 1;
-    b->sync = 1;
+    out->next = NULL;
+
     r->headers_out.status = NGX_HTTP_OK;
-  //  r->headers_out.content_length_n = content_length;
+
+    r->headers_out.content_length_n = content_length;
+
     ngx_http_send_header (r);
 
-    int rc =  ngx_http_output_filter (r, &out);
+    int rc =  ngx_http_output_filter (r, out);
 
-    ngx_http_finalize_request (r, NGX_OK);
+    ngx_http_finalize_request (r, rc);
 
     return rc;
 
