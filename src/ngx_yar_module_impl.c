@@ -190,7 +190,7 @@ yar_response*   ngx_http_yar_get_yar_response(ngx_http_request_t *r, yar_request
         ngx_log_error(NGX_LOG_WARN, r->connection->log, 0,
                       "yar call undefined method %s.",method);
 
-        yar_response_free(response);
+        yar_response_free((yar_response *)response);
 
         return NULL;
     }
@@ -230,7 +230,7 @@ yar_response*   ngx_http_yar_get_yar_response(ngx_http_request_t *r, yar_request
 
         int interval = my_conf->timeout;
 
-        add_timeout_to_func(current_method, try_times, interval, ret, request, response, cookie);
+        add_timeout_to_func(current_method, try_times, interval, ret, request, (yar_response *)response, cookie);
 
         if(ret == E_CALL_TIMEOUT){
 
