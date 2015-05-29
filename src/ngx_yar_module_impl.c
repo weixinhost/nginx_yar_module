@@ -166,7 +166,7 @@ yar_response*   ngx_http_yar_get_yar_response(ngx_http_request_t *r, yar_request
 
     volatile yar_response *response = (yar_response *)ngx_pnalloc(r->pool,sizeof(yar_response));
 
-    memset(response,0,sizeof(yar_response));
+    memset((yar_response *)response,0,sizeof(yar_response));
 
     response->id = 0;
 
@@ -284,7 +284,7 @@ yar_response*   ngx_http_yar_get_yar_response(ngx_http_request_t *r, yar_request
 
     }
 
-    return response;
+    return (yar_response *)response;
 
 }
 
