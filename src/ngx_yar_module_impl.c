@@ -107,7 +107,7 @@ yar_request*    ngx_http_yar_get_yar_request(ngx_http_request_t *r,ngx_str_t *bo
 
     protocol_body.len = body->len - protocol_len;
 
-    yar_request *request =  (yar_request *)ngx_pnalloc(r->pool,sizeof(yar_request));
+    volatile yar_request *request =  (yar_request *)ngx_pnalloc(r->pool,sizeof(yar_request));
 
     memset(request,0,sizeof(yar_request));
 
