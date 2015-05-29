@@ -272,30 +272,21 @@ ngx_int_t       ngx_http_yar_send_response(ngx_http_request_t *r, ngx_str_t *rep
 
     ngx_buf_t   *b;
 
-   // ngx_chain_t  out = ngx_pcalloc (r->pool, sizeof (ngx_chain_t));;
-    ngx_chain_t  out;
+    ngx_chain_t  *out = ngx_pcalloc (r->pool, sizeof (ngx_chain_t));;
     ngx_uint_t content_length = reply->len;
 
     printf("%d\n\n",(int)content_length);
 
     ngx_str_set (&r->headers_out.content_type, "application/msgpack");
 
-   // b = ngx_pcalloc (r->pool, sizeof (ngx_buf_t));
       b = ngx_create_temp_buf(r->pool, content_length);
       memcpy(b->pos,reply->data,content_length);
       b->last = b->pos + content_length;
       b->last_buf = 1;
 
-    out.buf = b;
+    out->buf = b;
 
-    out.next = NULL;
-
-    /*
-    b->pos = reply->data;
-    b->last = reply->data + content_length;
-    b->memory = 1;
-    b->last_buf = 1;
-    */
+    out->next = NULL;
 
     r->headers_out.status = NGX_HTTP_OK;
 
@@ -303,7 +294,7 @@ ngx_int_t       ngx_http_yar_send_response(ngx_http_request_t *r, ngx_str_t *rep
 
     ngx_http_send_header (r);
 
-    int rc =  ngx_http_output_filter (r, &out);
+    int rc =  ngx_http_output_filter (r, out);
 
     ngx_http_finalize_request (r, rc);
 
