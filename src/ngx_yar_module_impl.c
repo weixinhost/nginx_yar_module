@@ -141,18 +141,6 @@ yar_request*    ngx_http_yar_get_yar_request(ngx_http_request_t *r,ngx_str_t *bo
 
 }
 
-volatile int http_handler_invoke_count = 0;
-volatile int http_handler_invoke_timeout = 0;
-sigjmp_buf http_handler_invoke_env;
-static ngx_event_t ev;
-
-static void ngx_http_yar_check_timeout(ngx_event_t *ev){
-
-    http_handler_invoke_count++;
-    longjmp(http_handler_invoke_env,1);
-}
-
-
 yar_response*   ngx_http_yar_get_yar_response(ngx_http_request_t *r, yar_request *request){
 
     if(!r || !request) return NULL;
@@ -234,60 +222,29 @@ yar_response*   ngx_http_yar_get_yar_response(ngx_http_request_t *r, yar_request
 
     }
 
-    http_handler_invoke_timeout = my_conf->timeout;
-    http_handler_invoke_count = 0;
-
-
     if(my_conf->timeout > 0){
 
-              int try_times = my_conf->timeout_try_times < 1 ? 1 :my_conf->timeout_try_times; //more than 1
+        int ret = 0;
 
-              ev.handler = ngx_http_yar_check_timeout;
-              ev.log  = NULL;
-              ev.data = NULL;
+        int try_times = my_conf->timeout_try_times < 1 ? 1 :my_conf->timeout_try_times; //more than 1
 
-              //ngx_add_timer(&ev, http_handler_invoke_timeout);
+        int interval = my_conf->timeout;
 
-              if (setjmp(http_handler_invoke_env) != 0) {
+        add_timeout_to_func(current_method, try_times, interval, ret, request, (yar_response *)response, cookie);
 
-                  if(http_handler_invoke_count >= try_times){
-
-                          goto timeout;
-
-                  }else{
-
-                      printf("error.0.0.0\n\n\n\n");
-                      //exit(0);
-
-                      ngx_add_timer(&ev, http_handler_invoke_timeout);
-
-                  }
-
-              }else{
-
-                  ngx_add_timer(&ev, http_handler_invoke_timeout);
-
-              }
-
-
-
-        current_method((yar_request *)request,(yar_response *)response,cookie);
-
-
-        timeout : {
+        if(ret == E_CALL_TIMEOUT){
 
             ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
                           "yar call method %s timeout.",method);
 
-        };
-
-
+        }
 
     }else{
 
         current_method((yar_request *)request,(yar_response *)response,cookie);
 
     }
+
 
 
     char finalize_method[256] = {0};
