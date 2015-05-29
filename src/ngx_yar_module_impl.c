@@ -164,7 +164,7 @@ yar_response*   ngx_http_yar_get_yar_response(ngx_http_request_t *r, yar_request
 
     }
 
-    yar_response *response = (yar_response *)ngx_pnalloc(r->pool,sizeof(yar_response));
+    volatile yar_response *response = (yar_response *)ngx_pnalloc(r->pool,sizeof(yar_response));
 
     memset(response,0,sizeof(yar_response));
 
@@ -176,7 +176,7 @@ yar_response*   ngx_http_yar_get_yar_response(ngx_http_request_t *r, yar_request
 
     response->payload.data = NULL;
 
-    char *cookie = NULL;
+    volatile char *cookie = NULL;
 
     char real_method[256] = {0};
 
