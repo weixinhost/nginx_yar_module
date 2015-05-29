@@ -12,7 +12,7 @@ static char* ngx_http_yar_conf_yar_custom_config(ngx_conf_t *cf, ngx_command_t *
 static char* ngx_http_yar_conf_on(ngx_conf_t *cf, ngx_command_t *cmd,void *conf);
 static char* ngx_http_yar_conf_debug(ngx_conf_t *cf, ngx_command_t *cmd,void *conf);
 static char* ngx_http_yar_conf_timeout(ngx_conf_t *cf, ngx_command_t *cmd,void *conf);
-
+static char* ngx_http_yar_conf_slow_timeout(ngx_conf_t *cf, ngx_command_t *cmd,void *conf);
 ngx_int_t ngx_http_yar_read_request_handler(ngx_http_request_t *r);
 void ngx_http_yar_handler(ngx_http_request_t *r);
 
@@ -88,8 +88,18 @@ static ngx_command_t ngx_http_yar_commands[] = {
         },
 
         {
+                ngx_string("yar_slow_timeout"),
+                NGX_HTTP_LOC_CONF|NGX_CONF_TAKE1,
+                ngx_http_yar_conf_slow_timeout,
+                NGX_HTTP_LOC_CONF_OFFSET,
+                offsetof(ngx_http_yar_loc_conf_t, slow_timeout),
+                NULL
+        },
+
+
+        {
                 ngx_string("yar_timeout"),
-                NGX_HTTP_LOC_CONF|NGX_CONF_NOARGS|NGX_CONF_TAKE1,
+                NGX_HTTP_LOC_CONF|NGX_CONF_TAKE1,
                 ngx_http_yar_conf_timeout,
                 NGX_HTTP_LOC_CONF_OFFSET,
                 offsetof(ngx_http_yar_loc_conf_t, timeout),
@@ -97,8 +107,10 @@ static ngx_command_t ngx_http_yar_commands[] = {
         },
 
 
+
         ngx_null_command
 };
+
 
 
 static ngx_http_module_t ngx_http_yar_module_ctx = {
@@ -148,6 +160,8 @@ static void *ngx_http_yar_create_loc_conf(ngx_conf_t *cf)
     local_conf->on      = 0;
 
     local_conf->debug   = 0;
+
+    local_conf->slow_timeout = NGX_CONF_UNSET;
 
     return local_conf;
 }
@@ -247,6 +261,16 @@ static char* ngx_http_yar_conf_timeout(ngx_conf_t *cf, ngx_command_t *cmd,void *
     return NULL;
 }
 
+static char* ngx_http_yar_conf_slow_timeout(ngx_conf_t *cf, ngx_command_t *cmd,void *conf){
+
+
+    char* rt = ngx_conf_set_num_slot(cf, cmd, conf); //调用ngx_conf_set_num_slot 处理ngx_int_t类型的变量
+
+    return rt;
+}
+
+
+
 void ngx_http_yar_handler(ngx_http_request_t *r){
 
     ngx_str_t error;
@@ -314,28 +338,14 @@ void ngx_http_yar_handler(ngx_http_request_t *r){
 
 
     ngx_str_t *reply = ngx_pcalloc (r->pool, sizeof (ngx_str_t));
+
     u_char *data  = ngx_pcalloc (r->pool, sizeof (u_char) * response->payload.size);
     reply->len = response->payload.size;
+
     memcpy(data,response->payload.data,response->payload.size);
     reply->data = data;
 
     ngx_http_yar_send_response(r,reply);
-
-
-    /*
-    reply->data = data;
-    reply->len = response->payload.size;
-    set_reply(reply);
-     */
-
-    /*
-    ngx_str_t reply;
-    reply.data = (u_char *)response->payload.data;
-
-    reply.len = response->payload.size;
-
-
-    */
 
     goto clean_resource;
 

@@ -249,9 +249,7 @@ yar_response*   ngx_http_yar_get_yar_response(ngx_http_request_t *r, yar_request
 
     float used_msec = ((float)(used_sec * 1000 * 1000) +used_usec) / 1000;
 
-    //todo swtich to nginx config
-
-    if(used_msec > 100){
+    if(my_conf->slow_timeout > 0 && used_msec > my_conf->slow_timeout){
 
         ngx_log_error(NGX_LOG_WARN, r->connection->log, 0,
                       "yar call method %s too slow. [%.3f ms]",method,used_msec);
@@ -270,12 +268,11 @@ yar_response*   ngx_http_yar_get_yar_response(ngx_http_request_t *r, yar_request
 
 ngx_int_t       ngx_http_yar_send_response(ngx_http_request_t *r, ngx_str_t *reply){
 
-    ngx_buf_t   *b;
+    ngx_buf_t   *b = NULL;
 
     ngx_chain_t  *out = ngx_pcalloc (r->pool, sizeof (ngx_chain_t));;
-    ngx_uint_t content_length = reply->len;
 
-    printf("%d\n\n",(int)content_length);
+    ngx_uint_t content_length = reply->len;
 
     ngx_str_set (&r->headers_out.content_type, "application/msgpack");
 

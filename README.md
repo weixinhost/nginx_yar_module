@@ -35,7 +35,8 @@ Yar是一个高效且简单的RPC协议。目前已经有[PHP语言版本](https
 
 				yar_method_path		"xxxx.so";	    yar handler 库
 
-				yar_timeout			5;			    yar handler超时
+				yar_timeout			100;			    yar handler超时
+				yar_slow_timeout    500;                慢日志记录
 
 				yar_bootstrap		"bootstrap";    每个request都首先调用该方法。
 
