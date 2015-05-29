@@ -2,6 +2,7 @@
 #include "ngx_yar_module_handler.h"
 #include <dlfcn.h>
 #include <sys/time.h>
+#include "func_timeout_call.h"
 
 typedef void (*yar_bootstrap_method)(void *config,uint config_len);
 
@@ -221,7 +222,29 @@ yar_response*   ngx_http_yar_get_yar_response(ngx_http_request_t *r, yar_request
 
     }
 
-    current_method(request,response,cookie);
+    if(my_conf->timeout > 0){
+
+        int ret = 0;
+
+        int try_times = my_conf->timeout_try_times < 1 ? 1 :my_conf->timeout_try_times; //more than 1
+
+        int interval = my_conf->timeout;
+
+        add_timeout_to_func(current_method, try_times, interval, ret, request, response, cookie);
+
+        if(ret == E_CALL_TIMEOUT){
+
+            ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
+                          "yar call method %s timeout.",method);
+
+        }
+
+    }else{
+
+        current_method(request,response,cookie);
+
+    }
+
 
     char finalize_method[256] = {0};
 
