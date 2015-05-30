@@ -10,5 +10,4 @@ CORE_LIBS="$CORE_LIBS $ngx_feature_libs"
 NGX_ADDON_SRCS="$NGX_ADDON_SRCS
 $ngx_addon_dir/src/ngx_yar_module_handler.c
 $ngx_addon_dir/src/ngx_yar_module_impl.c
-$ngx_addon_dir/src/func_timeout_call.c
 "

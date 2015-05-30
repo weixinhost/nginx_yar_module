@@ -2,7 +2,7 @@
 #include "ngx_yar_module_handler.h"
 #include <dlfcn.h>
 #include <sys/time.h>
-#include "func_timeout_call.h"
+
 
 typedef void (*yar_bootstrap_method)(void *config,uint config_len);
 
@@ -164,7 +164,7 @@ yar_response*   ngx_http_yar_get_yar_response(ngx_http_request_t *r, yar_request
 
     }
 
-    volatile yar_response *response = (yar_response *)ngx_pnalloc(r->pool,sizeof(yar_response));
+    yar_response *response = (yar_response *)ngx_pnalloc(r->pool,sizeof(yar_response));
 
     memset((yar_response *)response,0,sizeof(yar_response));
 
@@ -222,30 +222,11 @@ yar_response*   ngx_http_yar_get_yar_response(ngx_http_request_t *r, yar_request
 
     }
 
-    if(my_conf->timeout > 0){
+    /**
+     * todo:i will be implement yar_timeout with current_method run as long time.
+     */
 
-        int ret = 0;
-
-        int try_times = my_conf->timeout_try_times < 1 ? 1 :my_conf->timeout_try_times; //more than 1
-
-        int interval = my_conf->timeout;
-
-        add_timeout_to_func(current_method, try_times, interval, ret, request, (yar_response *)response, cookie);
-
-        if(ret == E_CALL_TIMEOUT){
-
-            ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
-                          "yar call method %s timeout.",method);
-
-        }
-
-    }else{
-
-        current_method((yar_request *)request,(yar_response *)response,cookie);
-
-    }
-
-
+    current_method((yar_request *)request,(yar_response *)response,cookie);
 
     char finalize_method[256] = {0};
 
