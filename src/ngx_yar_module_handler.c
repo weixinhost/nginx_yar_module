@@ -181,7 +181,7 @@ static char* ngx_http_yar_conf_yar_method_path(ngx_conf_t *cf, ngx_command_t *cm
 
     char* rv = ngx_conf_set_str_slot(cf, cmd, local_conf);
 
-    if(local_conf->yar_method_path.len > 0){
+    if(local_conf->yar_method_path.len > 0 && local_conf->yar_method_handler == NULL){
 
         local_conf->yar_method_handler = (void *) dlopen ((const char *) local_conf->yar_method_path.data,
                                                    RTLD_NOW | RTLD_LOCAL);
@@ -311,7 +311,6 @@ void ngx_http_yar_handler(ngx_http_request_t *r){
     memcpy(response->payload.data, (char *)&response_header, sizeof(yar_header));
 
     memcpy(response->payload.data + sizeof(yar_header), YAR_PACKAGER, sizeof(YAR_PACKAGER));
-
 
     ngx_str_t *reply = ngx_pcalloc (r->pool, sizeof (ngx_str_t));
 
