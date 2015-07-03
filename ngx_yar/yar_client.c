@@ -335,6 +335,9 @@ static yar_response * yar_client_http_caller(yar_client *client, char *method, u
 
     }
 
+
+
+
     response_header = (yar_header *)client->write_buffer.buf;
 
     if (!yar_protocol_parse(response_header)) {

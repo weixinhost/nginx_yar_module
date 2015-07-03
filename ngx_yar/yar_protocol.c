@@ -42,6 +42,8 @@ int yar_protocol_parse(yar_header *header) /* {{{ */ {
 
     header->magic_num = ntohl(header->magic_num);
 
+
+
 	if (header->magic_num != YAR_PROTOCOL_MAGIC_NUM) {
 		return 0;
 	}
