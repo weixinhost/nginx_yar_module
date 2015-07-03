@@ -40,10 +40,7 @@ void yar_protocol_render(yar_header *header, uint id, char *provider, char *toke
 
 int yar_protocol_parse(yar_header *header) /* {{{ */ {
 
-    printf("%d %d \n",YAR_PROTOCOL_MAGIC_NUM ,header->magic_num);
     header->magic_num = ntohl(header->magic_num);
-    printf("%d %d \n",YAR_PROTOCOL_MAGIC_NUM ,header->magic_num);
-
 
 	if (header->magic_num != YAR_PROTOCOL_MAGIC_NUM) {
 		return 0;

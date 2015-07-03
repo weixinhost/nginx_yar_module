@@ -279,7 +279,7 @@ static yar_response * yar_client_http_caller(yar_client *client, char *method, u
         yar_pack_free(packager);
     }
 
-    printf("pack OK.\n");
+
 
     if (!yar_request_pack(request, &payload, sizeof(yar_header) + sizeof(YAR_PACKAGER))) {
         yar_request_free(request);
@@ -287,7 +287,7 @@ static yar_response * yar_client_http_caller(yar_client *client, char *method, u
 
         return NULL;
     }
-    printf("pack header OK.\n");
+
 
     yar_protocol_render(&header, request->id, YAR_CLIENT_NAME, NULL, payload.size - sizeof(yar_header), client->persistent? YAR_PROTOCOL_PERSISTENT : 0);
 
@@ -335,9 +335,6 @@ static yar_response * yar_client_http_caller(yar_client *client, char *method, u
 
     }
 
-    printf("check header OK.%d \n",client->write_buffer.len);
-
-
     response_header = (yar_header *)client->write_buffer.buf;
 
     if (!yar_protocol_parse(response_header)) {
@@ -347,7 +344,7 @@ static yar_response * yar_client_http_caller(yar_client *client, char *method, u
         goto clean_curl;
 
     }
-    printf("parse header OK.\n");
+
     response = calloc(1,sizeof(yar_response));
 
     response->payload.data = malloc(sizeof(yar_header) + client->write_buffer.len);
