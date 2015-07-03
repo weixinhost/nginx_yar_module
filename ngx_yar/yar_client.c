@@ -237,6 +237,7 @@ static size_t yar_client_http_write_func (void *contents, size_t size, size_t nm
 
     }
 
+
     memcpy(mem->buf + mem->len,contents,realsize);
 
     mem->len += realsize;
