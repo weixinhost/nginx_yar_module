@@ -334,7 +334,8 @@ static yar_response * yar_client_http_caller(yar_client *client, char *method, u
 
     }
 
-    printf("check header OK.\n");
+    printf("check header OK.%d \n",client->write_buffer.len);
+
 
     response_header = (yar_header *)client->write_buffer.buf;
 
